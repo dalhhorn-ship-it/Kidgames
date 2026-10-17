@@ -56,6 +56,10 @@ Money saving tips:
 
 Apps are played mostly in Safari on an iPad, so that is the default target for every agent: touch first, both orientations, no accidental zoom or text selection, installable to the home screen and working offline, sound after the first tap. Tests run in Playwright's WebKit engine with iPad profiles, and at each milestone you get a local network address to try it on the real iPad. The full rules are in `template/CLAUDE.md` under "Target device".
 
+## Hosted on Cloudflare Workers
+
+Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at `dist/`, `npm run deploy`). Deploying is always your call: `/ship` asks home network only, private behind Cloudflare Access, or public. To deploy from GitHub instead of your laptop, add the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets to the app repo and run the Deploy workflow by hand. Server side features (KV, D1, Worker code) are only added when a PRD needs them and you approve.
+
 ## Learning loop: every app improves the factory
 
 1. While building, the operator logs every retry, escalation, gate block and slipped bug in `docs/FRICTION.md`.

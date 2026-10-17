@@ -83,6 +83,18 @@ Unless the PRD says otherwise, apps are played in **Safari on an iPad**, held by
 * Performance: smooth on an older iPad. Keep assets small, use CSS transforms or canvas, avoid heavy libraries.
 * Test in WebKit with an iPad device profile (Playwright), plus a real iPad check at each milestone: run the dev server on the local network (`npm run dev -- --host`) and open the shown address on the iPad.
 
+## Hosting: Cloudflare Workers
+
+Apps are hosted on Cloudflare Workers, serving the built site as static assets.
+* Config lives in `wrangler.jsonc` with `"assets": { "directory": "./dist" }`. Name the Worker after the app. `compatibility_date` is set to the day the project is created.
+* Add npm scripts: `deploy` (`npm run build && wrangler deploy`) and `preview` (build, then `wrangler dev` to run the built site locally like production).
+* `wrangler` is a dev dependency, never a global install.
+* The default URL is `<app>.<account subdomain>.workers.dev`. A custom domain or route is a founder decision.
+* Static assets only by default. Worker code, KV, D1, R2 or any server side logic is added only when the PRD needs it and the founder approved it. Free plan limits must hold.
+* Do not confuse the Cloudflare Worker (hosting) with the browser service worker (offline play on the iPad). They are separate files. Name them clearly.
+* Never commit Cloudflare tokens or account ids. Deploys from CI use the repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, which only the founder adds.
+* Every deploy is a founder decision (Gate 2). For a private test, prefer `wrangler dev` on the local network, or protect the Worker with Cloudflare Access (founder sets it up).
+
 ## Rules for everyone
 
 * Tests ship with code. Every feature task includes tests. `./scripts/check.sh` must pass before a task is done.
