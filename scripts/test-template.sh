@@ -67,10 +67,22 @@ expect 2 "$app/scripts/signoff.sh"
 expect 2 "$app/.claude/settings.json"
 pass "gate blocks code before signoff"
 
-# 4. Signoff requires READY status
+# 4. Signoff requires READY status, and the approval hook stamps only on a real approve
+approve() { printf '%s' "$1" | CLAUDE_PROJECT_DIR="$app" "$app/.claude/hooks/prd-approve.sh" >/dev/null; }
+unstamp() { rm "$app/docs/PRD.approved"; sed -i.bak 's/Status: APPROVED by .*/Status: READY FOR SIGNOFF/' "$app/docs/PRD.md"; }
+q="Approve this PRD so we can start building?"
 ( cd "$app" && ! ./scripts/signoff.sh "Founder" >/dev/null ) || fail "signed a template PRD"
 sed -i.bak 's/Status: TEMPLATE/Status: READY FOR SIGNOFF/' "$app/docs/PRD.md"
-( cd "$app" && ./scripts/signoff.sh "Founder" >/dev/null ) || fail "signoff failed"
+approve "{\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"AskUserQuestion\",\"tool_response\":{\"answers\":{\"$q\":\"Change something\"}}}"
+approve '{"hook_event_name":"UserPromptSubmit","prompt":"looks good but do not approve yet"}'
+[[ ! -f "$app/docs/PRD.approved" ]] || fail "hook stamped without approval"
+approve "{\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"AskUserQuestion\",\"tool_response\":{\"answers\":{\"$q\":\"Approve\"}}}"
+( cd "$app" && ./scripts/signoff.sh --check >/dev/null ) || fail "hook did not stamp after Approve"
+unstamp
+approve "{\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"AskUserQuestion\",\"tool_response\":\"User has answered: \\\"$q\\\"=\\\"Approve\\\"\"}"
+( cd "$app" && ./scripts/signoff.sh --check >/dev/null ) || fail "hook did not stamp from a text answer"
+unstamp
+approve '{"hook_event_name":"UserPromptSubmit","prompt":"Approve!"}'
 grep -q 'Status: APPROVED by Founder' "$app/docs/PRD.md" || fail "status not flipped"
 expect 0 "$app/src/main.ts"
 expect 2 "$app/docs/PRD.approved"

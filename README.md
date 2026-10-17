@@ -47,7 +47,7 @@ Money saving tips:
 
 ## How the founder stays in charge
 
-* **No code before you approve the PRD.** Claude asks you in chat, you pick Approve, and Claude stamps that exact version of the PRD. A hook blocks all code edits until the stamp matches. Change the PRD later and the build is locked until you approve again.
+* **No code before you approve the PRD.** Claude asks you in chat. You pick Approve (or type "approve"), and a hook stamps that exact version of the PRD. Claude never stamps it itself. A hook blocks all code edits until the stamp matches. Change the PRD later and the build is locked until you approve again.
 * **Important decisions come to you** as multiple choice questions with a recommendation: scope changes, anything that costs money or needs an account, kid safety, platform choice, public deployment, and any agent disagreement not settled in two review rounds.
 * Everything else is logged in `docs/DECISIONS.md` and the agent debates in `docs/DISCUSSION.md`, so you can read what happened.
 
@@ -82,6 +82,7 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 | `.claude/agents/` | General purpose copies of the six agents, usable right here in this repo |
 | `template/.claude/skills/` | The pipeline commands |
 | `template/.claude/hooks/prd-gate.sh` | The PRD approval gate |
+| `template/.claude/hooks/prd-approve.sh` | Stamps the PRD when you approve it in chat |
 | `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
 | `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
 | `scripts/make-app.sh` | Turns a "Use this template" copy into an app. Claude runs it on the first message |
