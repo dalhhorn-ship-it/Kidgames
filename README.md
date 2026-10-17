@@ -4,9 +4,10 @@ A reusable template for building small apps and games with my kids, using a team
 
 ## Start a new app
 
-1. Make a new git repo for the app.
-2. Copy everything in `template/` into it, hidden files too (`.claude`, `.github`, `.factory`, `.gitignore`).
-3. Open Claude Code in the new repo and just say what you want to make, for example "a game about space bunnies". No command needed.
+1. On GitHub, click **Use this template** on this repo and make a new repo for the app.
+2. Open Claude Code in the new repo and just say what you want to make, for example "a game about space bunnies". No command needed.
+
+On that first message Claude sees it is a copy, runs `./scripts/make-app.sh` (moves `template/` to the root, removes the factory files), commits, and starts brainstorming. Copying `template/` by hand into an empty repo works too.
 
 The brainstormer comes up with ideas, you and the kids pick one, and the factory takes it from there. `/brainstorm` and `/factory` still work if you prefer commands.
 
@@ -83,6 +84,7 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 | `template/.claude/hooks/prd-gate.sh` | The signoff gate |
 | `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
 | `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
+| `scripts/make-app.sh` | Turns a "Use this template" copy into an app. Claude runs it on the first message |
 | `scripts/test-template.sh` | Self test for the template (CI runs it) |
 
 

@@ -29,11 +29,22 @@ python3 -m json.tool "$here/template/.claude/settings.json" >/dev/null || fail "
 pass "settings.json valid"
 
 # 2. New app scaffolding
+fcopy="$tmp/factory"; mkdir -p "$fcopy" && cp -R "$here/scripts" "$fcopy/" && mkdir -p "$fcopy/template"
+git -C "$fcopy" init -q && git -C "$fcopy" remote add origin https://github.com/dalhhorn-ship-it/Kidgames.git
+( cd "$fcopy" && ! ./scripts/make-app.sh >/dev/null ) || fail "make-app.sh ran in the factory repo"
+[[ -d "$fcopy/template" ]] || fail "make-app.sh touched the factory repo"
+pass "make-app.sh refuses to run in the factory repo"
 git config --global user.email >/dev/null 2>&1 || export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
-# Same as the founder does it: copy template/ into a fresh git repo.
+# Same as GitHub "Use this template": a copy of the whole factory repo, then make-app.sh.
 app="$tmp/app"
-mkdir -p "$app" && cp -R "$here/template/." "$app/"
-git -C "$app" init -q && git -C "$app" add -A && git -C "$app" commit -qm "start from template"
+mkdir -p "$app" && (cd "$here" && tar --exclude=.git -cf - .) | tar -xf - -C "$app"
+git -C "$app" init -q && git -C "$app" remote add origin https://github.com/someone/space-bunnies.git
+git -C "$app" add -A && git -C "$app" commit -qm "Initial commit"
+( cd "$app" && ./scripts/make-app.sh >/dev/null ) || fail "make-app.sh failed"
+[[ ! -e "$app/template" && ! -e "$app/learnings" && ! -e "$app/scripts/make-app.sh" ]] || fail "factory files left in app"
+grep -q "^# App Factory" "$app/CLAUDE.md" || fail "app CLAUDE.md not in place"
+grep -Eq '^started: [0-9]{4}-[0-9]{2}-[0-9]{2}$' "$app/.factory" || fail ".factory start date not set"
+( cd "$app" && git add -A && git commit -qm "chore: start app from kidgames template" )
 [[ -x "$app/.claude/hooks/prd-gate.sh" ]] || fail "hook not executable in new app"
 grep -q '^factory_repo: ' "$app/.factory" || fail ".factory missing factory_repo"
 grep -q '^started:' "$app/.factory" || fail ".factory missing started"
@@ -42,7 +53,7 @@ for f in "$here"/template/.claude/skills/*/SKILL.md "$here"/template/.claude/age
   rel="${f#"$here"/template/}"
   git -C "$app" ls-files --error-unmatch "$rel" >/dev/null 2>&1 || fail "$rel is not committed in a new app (gitignore?)"
 done
-pass "copied template makes a repo linked to the factory"
+pass "make-app.sh turns a template copy into an app linked to the factory"
 
 hook() { printf '{"tool_name":"Write","tool_input":{"file_path":"%s","content":"x"}}' "$1" \
   | CLAUDE_PROJECT_DIR="$app" "$app/.claude/hooks/prd-gate.sh" 2>/dev/null; }
