@@ -6,7 +6,7 @@ Status: TEMPLATE
 Two sentences: what it is and why it is fun.
 
 ## 2. Users
-Who plays, ages, alone or together, which device.
+Who plays, ages, alone or together. Device: iPad in Safari, added to the home screen (default; say so if different). Orientation: landscape, portrait or both.
 
 ## 3. Goals and success
 How we will know it worked (for example "the kids ask to play again tomorrow").
@@ -32,7 +32,7 @@ Style, colors, sounds, words on screen, reading level.
 * Network use:
 * Tracking, ads, purchases, chat: none
 * External links: none, or behind a parent gate
-* Accessibility: big touch targets, readable text, works without sound
+* Accessibility: big touch targets, readable text, works without sound or with the mute switch on
 
 ## 10. Constraints
 Platform, budget (default: free), offline, time.

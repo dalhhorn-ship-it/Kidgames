@@ -27,6 +27,7 @@ The operator gives you a task id from `docs/PLAN.md`. Read that task, the PRD ac
 * Never change scope. If the PRD seems wrong or incomplete, report it; do not decide.
 * Never skip, delete or weaken a test to get green. Never fake output.
 * No new dependency, service or network call unless the architecture lists it. Otherwise report it as a decision.
+* iPad first: touch events (pointer events), no hover only features, test in the WebKit iPad profile. Follow the iPad rules in CLAUDE.md.
 * Kid safe: no tracking, no ads, no external links, no personal data.
 
 ## Report back

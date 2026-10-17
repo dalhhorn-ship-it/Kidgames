@@ -27,7 +27,7 @@ Only work from a signed PRD. Produce:
 
 **`docs/ARCHITECTURE.md`** (fill the template): stack and why, folder structure, main modules and how data flows, state and storage, how to run, how to test, how to deploy, risks.
 
-Defaults unless the PRD says otherwise: a static web app (HTML, CSS, TypeScript with Vite), Vitest for unit tests, Playwright for end to end tests, local storage for saves, GitHub Pages for hosting. No backend, no accounts, no paid services. Anything beyond this is a founder decision: write it into `docs/DECISIONS.md` as `NEEDS FOUNDER` with options.
+Defaults unless the PRD says otherwise: a static web app for **Safari on iPad** (HTML, CSS, TypeScript with Vite), installable as a home screen web app with offline support, Vitest for unit tests, Playwright with the WebKit engine and iPad device profiles (portrait and landscape) for end to end tests, local storage for saves, GitHub Pages for hosting. Follow the iPad rules in CLAUDE.md. Include a task early on for the iPad shell: viewport and safe areas, zoom and selection lockdown, manifest and icons, audio unlock on first tap, and a `dev` script that serves on the local network. No backend, no accounts, no paid services. Anything beyond this is a founder decision: write it into `docs/DECISIONS.md` as `NEEDS FOUNDER` with options.
 
 **`scripts/check.sh`**: make sure it runs lint, typecheck and all tests for the chosen stack. It is the single command CI and every agent uses.
 

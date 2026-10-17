@@ -15,7 +15,7 @@ Then type `/brainstorm` (with the kids!) or just `/factory` and let it guide you
 ## The pipeline
 
 ```
-/brainstorm -> /prd -> /signoff (founder) -> /architect -> /build -> /qa -> /ship
+/brainstorm -> /prd -> /signoff (founder) -> /architect -> /build -> /qa -> /ship -> /retro
 ```
 
 | Command | Who does the work | Founder involvement |
@@ -27,6 +27,7 @@ Then type `/brainstorm` (with the kids!) or just `/factory` and let it guide you
 | `/build` | developers in parallel, architect reviews, scribe documents | Play each milestone, decide scope questions |
 | `/qa` | qa, developers fix | Choose which minor bugs to fix now |
 | `/ship` | operator, scribe | Approve where it gets deployed |
+| `/retro` | operator | Rate the fun, say what was annoying (kids too) |
 | `/factory` | runs whichever step is next | Stops at every gate |
 
 ## The team and the models
@@ -51,6 +52,17 @@ Money saving tips:
 * **Important decisions come to you** as multiple choice questions with a recommendation: scope changes, anything that costs money or needs an account, kid safety, platform choice, public deployment, and any agent disagreement not settled in two review rounds.
 * Everything else is logged in `docs/DECISIONS.md` and the agent debates in `docs/DISCUSSION.md`, so you can read what happened.
 
+## Built for the iPad
+
+Apps are played mostly in Safari on an iPad, so that is the default target for every agent: touch first, both orientations, no accidental zoom or text selection, installable to the home screen and working offline, sound after the first tap. Tests run in Playwright's WebKit engine with iPad profiles, and at each milestone you get a local network address to try it on the real iPad. The full rules are in `template/CLAUDE.md` under "Target device".
+
+## Learning loop: every app improves the factory
+
+1. While building, the operator logs every retry, escalation, gate block and slipped bug in `docs/FRICTION.md`.
+2. `/retro` (runs at the end of `/ship`, or any time) asks you and the kids what was fun and annoying, combines that with the evidence, and sorts learnings into app lessons (kept in the app's `CLAUDE.md`) and factory learnings.
+3. Factory learnings go to `learnings/inbox/` in this repo. Each app knows where its factory is and which version it came from (`.factory`, written by `new-app.sh`).
+4. In this repo, run `claude` and then `/harvest`. It groups learnings across apps, skips ones already fixed, and proposes template changes. You choose adopt, park or reject. Adopted changes are applied, tested and logged in `learnings/LEARNINGS.md`.
+
 ## Testing and docs
 
 * Every app has one check command, `./scripts/check.sh` (lint, typecheck, unit and end to end tests). Agents must pass it before a task is done, and CI runs it on every push.
@@ -66,7 +78,9 @@ Money saving tips:
 | `template/.claude/agents/` | The six agents |
 | `template/.claude/skills/` | The pipeline commands |
 | `template/.claude/hooks/prd-gate.sh` | The signoff gate |
-| `scripts/new-app.sh` | Create a new app from the template |
+| `scripts/new-app.sh` | Create a new app from the template and register it for `/harvest` |
+| `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
+| `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
 | `scripts/test-template.sh` | Self test for the template (CI runs it) |
 
 Want to use GitHub instead of the script? Make a repo, copy the contents of `template/` into it, done.

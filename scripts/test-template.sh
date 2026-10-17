@@ -21,16 +21,26 @@ for f in "$here"/template/.claude/skills/*/SKILL.md; do
   grep -q '^description: ' "$f" || fail "$f has no description"
 done
 grep -q '^disable-model-invocation: true' "$here/template/.claude/skills/signoff/SKILL.md" || fail "signoff must be founder only"
+for f in "$here"/.claude/skills/*/SKILL.md; do
+  grep -qx "name: $(basename "$(dirname "$f")")" "$f" || fail "$f name does not match folder"
+done
 pass "skills valid"
 python3 -m json.tool "$here/template/.claude/settings.json" >/dev/null || fail "settings.json invalid"
 pass "settings.json valid"
 
 # 2. New app scaffolding
 git config --global user.email >/dev/null 2>&1 || export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
-"$here/scripts/new-app.sh" "$tmp/app" >/dev/null
+FACTORY_NO_REGISTER=1 "$here/scripts/new-app.sh" "$tmp/app" >/dev/null
 app="$tmp/app"
 [[ -x "$app/.claude/hooks/prd-gate.sh" ]] || fail "hook not executable in new app"
-pass "new-app.sh creates a repo"
+grep -q '^factory_path: ' "$app/.factory" || fail ".factory missing factory_path"
+grep -q '^factory_version: ' "$app/.factory" || fail ".factory missing factory_version"
+[[ -f "$app/.claude/skills/retro/SKILL.md" && -f "$app/docs/FRICTION.md" ]] || fail "retro files missing"
+for f in "$here"/template/.claude/skills/*/SKILL.md "$here"/template/.claude/agents/*.md; do
+  rel="${f#"$here"/template/}"
+  git -C "$app" ls-files --error-unmatch "$rel" >/dev/null 2>&1 || fail "$rel is not committed in a new app (gitignore?)"
+done
+pass "new-app.sh creates a repo linked to the factory"
 
 hook() { printf '{"tool_name":"Write","tool_input":{"file_path":"%s","content":"x"}}' "$1" \
   | CLAUDE_PROJECT_DIR="$app" "$app/.claude/hooks/prd-gate.sh" 2>/dev/null; }

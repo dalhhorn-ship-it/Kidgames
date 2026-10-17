@@ -1,7 +1,7 @@
 node_modules/
-dist/
-build/
-coverage/
+/dist/
+/build/
+/coverage/
 .vite/
 test-results/
 playwright-report/

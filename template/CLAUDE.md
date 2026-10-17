@@ -26,13 +26,14 @@ Why these models: Opus is used only where a mistake is expensive (what to build,
 3. **Execution.** Each agent works on its own task with only the context it needs: task spec, relevant files, success criteria.
 4. **Artifacts.** Every task returns something concrete: files, test results, screenshots, commands run, plus a short summary.
 5. **Verification.** Run the code and the tests before marking anything done. A task is done only when it actually works.
-6. **Feedback.** On failure: read the error, fix the real cause, retry up to 3 times, then escalate to the founder with options. Record the lesson in the Lessons section below so it does not repeat.
+6. **Feedback.** On failure: read the error, fix the real cause, retry up to 3 times, then escalate to the founder with options. Record the lesson in the Lessons section below so it does not repeat, and log the event in `docs/FRICTION.md`.
 7. **Completion.** Run the completion checklist in `/ship` before calling the app finished.
+8. **Retro.** `/retro` looks back, keeps app lessons here and sends factory learnings back to the factory repo, so every app makes the next one better.
 
 ## The pipeline and the gates
 
 ```
-/brainstorm  ->  /prd  ->  [FOUNDER SIGNOFF]  ->  /architect  ->  /build  ->  /qa  ->  /ship
+/brainstorm  ->  /prd  ->  [FOUNDER SIGNOFF]  ->  /architect  ->  /build  ->  /qa  ->  /ship  ->  /retro
 ```
 
 `/factory` looks at `docs/STATUS.md` and runs the next step, stopping at every gate.
@@ -70,12 +71,25 @@ Append each round to `docs/DISCUSSION.md` (short: who said what, what changed). 
 6. At each milestone, ask `architect` for a code review and `scribe` to update docs.
 7. Continue until every task is done, then hand over to `/qa`.
 
+## Target device: iPad browser
+
+Unless the PRD says otherwise, apps are played in **Safari on an iPad**, held by a kid. Every agent designs, builds and tests for that.
+* Touch first. No hover states, no right click, no keyboard needed. Touch targets at least 44px, bigger for small kids. Use pointer events, and handle two fingers at once if kids play together.
+* Works in landscape and portrait, or locks the layout to one and says so. Respect safe areas (`viewport-fit=cover`, `env(safe-area-inset-*)`).
+* Feels like an app: no double tap zoom, no pinch zoom during play, no text selection or callout menus on long press, no pull to refresh or rubber band scrolling in game areas.
+* Installable as a home screen web app (manifest, icons, `apple-mobile-web-app-capable`), and works offline after the first visit (service worker).
+* Sound starts only after the first tap (iOS rule). The app must still work with the mute switch on.
+* Saves: Safari can wipe local storage of sites not opened for a while unless the app is added to the home screen. Tell the founder, and keep saves small and forgiving.
+* Performance: smooth on an older iPad. Keep assets small, use CSS transforms or canvas, avoid heavy libraries.
+* Test in WebKit with an iPad device profile (Playwright), plus a real iPad check at each milestone: run the dev server on the local network (`npm run dev -- --host`) and open the shown address on the iPad.
+
 ## Rules for everyone
 
 * Tests ship with code. Every feature task includes tests. `./scripts/check.sh` must pass before a task is done.
 * Docs ship with code. If behavior, setup or structure changed, the docs change in the same commit.
 * Keep it small. Prefer the simplest thing that makes the founder and kids happy. No accounts, servers or databases unless the PRD needs them.
 * Kid safe by default: no tracking, no ads, no external links without a parent gate, no collection of personal data, no chat with strangers, friendly error messages, readable fonts, big touch targets.
+* Log friction as it happens. Any retry, model escalation, misread task, gate block, founder override or bug that slipped past QA gets one line in `docs/FRICTION.md`. This is what `/retro` learns from.
 * Prefer real artifacts (files, test output, screenshots, URLs) over plans and promises.
 * Never fake a passing test, skip a test or weaken an assertion to get green.
 * Writing style for docs: short sentences, plain words, no dashes as punctuation.
@@ -93,6 +107,10 @@ Append each round to `docs/DISCUSSION.md` (short: who said what, what changed). 
 | `docs/DECISIONS.md` | Decision log, including founder decisions |
 | `docs/DISCUSSION.md` | Agent review rounds |
 | `docs/TEST_REPORT.md` | Latest QA results |
+| `docs/FRICTION.md` | Running log of problems, the raw material for `/retro` |
+| `docs/RETRO.md` | Retrospective results |
+| `docs/factory-feedback/` | Factory level learnings, also copied to the factory inbox |
+| `.factory` | Which factory (path and version) this app came from |
 | `CHANGELOG.md` | What changed, in kid readable words |
 | `scripts/check.sh` | The one command that lints and tests everything. CI runs it too. |
 
