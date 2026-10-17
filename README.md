@@ -75,7 +75,8 @@ Apps are played mostly in Safari on an iPad, so that is the default target for e
 |---|---|
 | `template/` | Everything copied into a new app |
 | `template/CLAUDE.md` | The factory operating manual the operator follows |
-| `template/.claude/agents/` | The six agents |
+| `template/.claude/agents/` | The six agents, as used inside an app |
+| `.claude/agents/` | General purpose copies of the six agents, usable right here in this repo |
 | `template/.claude/skills/` | The pipeline commands |
 | `template/.claude/hooks/prd-gate.sh` | The signoff gate |
 | `scripts/new-app.sh` | Create a new app from the template and register it for `/harvest` |
