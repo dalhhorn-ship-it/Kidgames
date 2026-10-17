@@ -30,6 +30,10 @@ Why these models: Opus is used only where a mistake is expensive (what to build,
 7. **Completion.** Run the completion checklist in `/ship` before calling the app finished.
 8. **Retro.** `/retro` looks back, keeps app lessons here and sends factory learnings back to the factory repo, so every app makes the next one better.
 
+## Getting started
+
+The founder starts an app by copying the template into a new repo and opening Claude Code. There is no setup command. If `docs/IDEA.md` has no chosen concept yet, treat the founder's first message (an idea, a wish, or just "hi") as the seed and run the `/brainstorm` steps right away. Do not ask them to type a command first.
+
 ## The pipeline and the gates
 
 ```
@@ -122,7 +126,7 @@ Apps are hosted on Cloudflare Workers, serving the built site as static assets.
 | `docs/FRICTION.md` | Running log of problems, the raw material for `/retro` |
 | `docs/RETRO.md` | Retrospective results |
 | `docs/factory-feedback/` | Factory level learnings, also copied to the factory inbox |
-| `.factory` | Which factory (path and version) this app came from |
+| `.factory` | Which factory repo this app came from and the date it started |
 | `CHANGELOG.md` | What changed, in kid readable words |
 | `scripts/check.sh` | The one command that lints and tests everything. CI runs it too. |
 

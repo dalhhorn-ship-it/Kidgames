@@ -1,7 +1,7 @@
 # Status
 
 **Phase:** not started
-**Next step:** `/brainstorm` (or `/factory`)
+**Next step:** tell Claude your idea (or `/brainstorm`)
 **Blockers:** none
 
 ## Done

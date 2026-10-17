@@ -4,13 +4,11 @@ A reusable template for building small apps and games with my kids, using a team
 
 ## Start a new app
 
-```
-./scripts/new-app.sh ../space-bunnies
-cd ../space-bunnies
-claude
-```
+1. Make a new git repo for the app.
+2. Copy everything in `template/` into it, hidden files too (`.claude`, `.github`, `.factory`, `.gitignore`).
+3. Open Claude Code in the new repo and just say what you want to make, for example "a game about space bunnies". No command needed.
 
-Then type `/brainstorm` (with the kids!) or just `/factory` and let it guide you.
+The brainstormer comes up with ideas, you and the kids pick one, and the factory takes it from there. `/brainstorm` and `/factory` still work if you prefer commands.
 
 ## The pipeline
 
@@ -64,7 +62,7 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 
 1. While building, the operator logs every retry, escalation, gate block and slipped bug in `docs/FRICTION.md`.
 2. `/retro` (runs at the end of `/ship`, or any time) asks you and the kids what was fun and annoying, combines that with the evidence, and sorts learnings into app lessons (kept in the app's `CLAUDE.md`) and factory learnings.
-3. Factory learnings go to `learnings/inbox/` in this repo. Each app knows where its factory is and which version it came from (`.factory`, written by `new-app.sh`).
+3. Factory learnings go to `learnings/inbox/` in this repo. Each app knows which factory it came from and when it started (`.factory`, filled in at the first brainstorm).
 4. In this repo, run `claude` and then `/harvest`. It groups learnings across apps, skips ones already fixed, and proposes template changes. You choose adopt, park or reject. Adopted changes are applied, tested and logged in `learnings/LEARNINGS.md`.
 
 ## Testing and docs
@@ -83,9 +81,8 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 | `.claude/agents/` | General purpose copies of the six agents, usable right here in this repo |
 | `template/.claude/skills/` | The pipeline commands |
 | `template/.claude/hooks/prd-gate.sh` | The signoff gate |
-| `scripts/new-app.sh` | Create a new app from the template and register it for `/harvest` |
 | `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
 | `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
 | `scripts/test-template.sh` | Self test for the template (CI runs it) |
 
-Want to use GitHub instead of the script? Make a repo, copy the contents of `template/` into it, done.
+

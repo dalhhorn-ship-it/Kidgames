@@ -30,17 +30,19 @@ pass "settings.json valid"
 
 # 2. New app scaffolding
 git config --global user.email >/dev/null 2>&1 || export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
-FACTORY_NO_REGISTER=1 "$here/scripts/new-app.sh" "$tmp/app" >/dev/null
+# Same as the founder does it: copy template/ into a fresh git repo.
 app="$tmp/app"
+mkdir -p "$app" && cp -R "$here/template/." "$app/"
+git -C "$app" init -q && git -C "$app" add -A && git -C "$app" commit -qm "start from template"
 [[ -x "$app/.claude/hooks/prd-gate.sh" ]] || fail "hook not executable in new app"
-grep -q '^factory_path: ' "$app/.factory" || fail ".factory missing factory_path"
-grep -q '^factory_version: ' "$app/.factory" || fail ".factory missing factory_version"
+grep -q '^factory_repo: ' "$app/.factory" || fail ".factory missing factory_repo"
+grep -q '^started:' "$app/.factory" || fail ".factory missing started"
 [[ -f "$app/.claude/skills/retro/SKILL.md" && -f "$app/docs/FRICTION.md" ]] || fail "retro files missing"
 for f in "$here"/template/.claude/skills/*/SKILL.md "$here"/template/.claude/agents/*.md; do
   rel="${f#"$here"/template/}"
   git -C "$app" ls-files --error-unmatch "$rel" >/dev/null 2>&1 || fail "$rel is not committed in a new app (gitignore?)"
 done
-pass "new-app.sh creates a repo linked to the factory"
+pass "copied template makes a repo linked to the factory"
 
 hook() { printf '{"tool_name":"Write","tool_input":{"file_path":"%s","content":"x"}}' "$1" \
   | CLAUDE_PROJECT_DIR="$app" "$app/.claude/hooks/prd-gate.sh" 2>/dev/null; }

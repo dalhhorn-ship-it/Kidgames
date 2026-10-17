@@ -13,7 +13,7 @@ Read, do not guess:
 * `docs/DECISIONS.md`, `docs/DISCUSSION.md`, `docs/TEST_REPORT.md`, `docs/STATUS.md`
 * `git log --oneline` (count fix commits, reverts, retries per task)
 * Lessons learned in `CLAUDE.md`
-* `.factory` (which factory version this app was made from)
+* `.factory` (which factory repo this app came from and the date it started)
 
 Count: tasks, retries, escalations to a bigger model, tasks blocked, bugs found by QA by severity, bugs that slipped past QA, founder decisions, times the founder overrode a recommendation, times the PRD gate blocked something, PRD re signoffs.
 
@@ -40,7 +40,7 @@ Rate each factory learning: impact (high, medium, low) and confidence (seen once
 
 ```
 # Factory feedback: <app name>, <date>
-Factory version: <commit from .factory>
+Factory started: <started date from .factory>
 App result: <fun rating>, <AC coverage>, <tasks>, <retries>
 
 ## F1: <short title>
@@ -55,7 +55,7 @@ App result: <fun rating>, <AC coverage>, <tasks>, <retries>
 
 ## 5. Send it to the factory
 
-Read `.factory` for `factory_path`. If that folder exists on this computer, copy the feedback file to `<factory_path>/learnings/inbox/<app name>-<date>.md`. If it does not exist (for example the app was cloned elsewhere), tell the founder the file to copy, or that `/harvest` in the factory can read it from this app's path.
+Read `.factory` for `factory_repo`. If a clone of that repo is on this computer next to this app, copy the feedback file to its `learnings/inbox/<app name>-<date>.md`. Otherwise tell the founder to run `/harvest <this app's path or GitHub repo>` in the factory, which reads `docs/factory-feedback/` from here.
 
 Do not edit the factory template from here. The factory decides what to adopt in `/harvest`, with the founder.
 

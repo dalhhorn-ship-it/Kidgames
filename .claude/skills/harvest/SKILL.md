@@ -9,7 +9,7 @@ You maintain the factory template. Learnings come in from apps; you turn the goo
 ## 1. Collect
 
 * Every file in `learnings/inbox/`.
-* For each app path in `learnings/apps.local` (one path per line, written by `scripts/new-app.sh`) and in $ARGUMENTS: any file in `<app>/docs/factory-feedback/` not already in `learnings/archive/` or the inbox. Copy new ones into the inbox as `<app name>-<file name>`.
+* For each app in $ARGUMENTS (a local path or a GitHub repo), and each path in `learnings/apps.local` if it exists (one path per line, optional): any file in `<app>/docs/factory-feedback/` not already in `learnings/archive/` or the inbox. Copy new ones into the inbox as `<app name>-<file name>`.
 
 If there is nothing new, say so and stop.
 
@@ -17,7 +17,7 @@ If there is nothing new, say so and stop.
 
 * Read `learnings/LEARNINGS.md` first, so you know what was already adopted or rejected.
 * Group items by template file and theme. Merge duplicates. An item reported by several apps is stronger evidence.
-* Check the factory version each app used (the `Factory version` line against `git log`): if the problem was already fixed after that version, mark it `already fixed`.
+* Check when each app started (the `Factory started` date against `git log`): if the problem was already fixed in the factory after that date, mark it `already fixed`.
 * For each remaining theme, draft a concrete change: the exact template file and the edit. Keep changes small and in the style of the existing files. Watch the cost: a change that makes every run slower or pricier needs strong evidence.
 
 ## 3. Founder decides
