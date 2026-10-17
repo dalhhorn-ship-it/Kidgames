@@ -15,3 +15,9 @@ This repo holds a template, not an app. `template/` gets copied into each new ap
 * Keep agents, skills, the template `CLAUDE.md` and the root `README.md` consistent (agent names, models, command names).
 * Template improvements come from app retros via `/harvest`. Log every adopted, parked or rejected learning in `learnings/LEARNINGS.md`.
 * Writing style: short sentences, plain words, no dashes as punctuation.
+
+## Apps made from this template
+
+* `dalhhorn-ship-it/minespel`
+
+After a template change is pushed to `main`, update each app listed here too: copy the changed `template/` files into the app root (never overwrite its `.factory` or its own docs and code), commit `chore: update from kidgames template` and push to the app's `main`. Add new apps to this list when they are created.
