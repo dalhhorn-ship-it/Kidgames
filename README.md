@@ -1,6 +1,6 @@
 # Kidgames: an agent factory for hobby apps
 
-A reusable template for building small apps and games with my kids, using a team of Claude agents. It follows a layered "software factory" approach: plan, agents, execution, artifacts, verification, feedback, completion. The founder (me) makes the important calls and signs the PRD before anything gets built.
+A reusable template for building small apps and games with my kids, using a team of Claude agents. It follows a layered "software factory" approach: plan, agents, execution, artifacts, verification, feedback, completion. The founder (me) makes the important calls and approves the PRD in chat before anything gets built.
 
 ## Start a new app
 
@@ -14,14 +14,14 @@ The brainstormer comes up with ideas, you and the kids pick one, and the factory
 ## The pipeline
 
 ```
-/brainstorm -> /prd -> /signoff (founder) -> /architect -> /build -> /qa -> /ship -> /retro
+/brainstorm -> /prd -> approve (founder) -> /architect -> /build -> /qa -> /ship -> /retro
 ```
 
 | Command | Who does the work | Founder involvement |
 |---|---|---|
 | `/brainstorm` | brainstormer | Pick a concept, answer a few questions |
 | `/prd` | product, reviewed by architect and qa | Answer open decisions |
-| `/signoff` | you | Read the PRD, sign with `! ./scripts/signoff.sh "Name"` |
+| `/signoff` | you | Read the PRD summary and pick Approve in chat. Runs by itself at the end of `/prd` |
 | `/architect` | architect, reviewed by developer and qa | Stack, cost or platform decisions |
 | `/build` | developers in parallel, architect reviews, scribe documents | Play each milestone, decide scope questions |
 | `/qa` | qa, developers fix | Choose which minor bugs to fix now |
@@ -47,7 +47,7 @@ Money saving tips:
 
 ## How the founder stays in charge
 
-* **PRD signoff is enforced, not just requested.** A hook blocks all code edits until `docs/PRD.approved` exists and matches the exact PRD text. Only you can create it, by running the signoff script yourself. Change the PRD later and the gate closes until you sign again. Claude is also blocked from editing the stamp, the script and the hook.
+* **No code before you approve the PRD.** Claude asks you in chat, you pick Approve, and Claude stamps that exact version of the PRD. A hook blocks all code edits until the stamp matches. Change the PRD later and the build is locked until you approve again.
 * **Important decisions come to you** as multiple choice questions with a recommendation: scope changes, anything that costs money or needs an account, kid safety, platform choice, public deployment, and any agent disagreement not settled in two review rounds.
 * Everything else is logged in `docs/DECISIONS.md` and the agent debates in `docs/DISCUSSION.md`, so you can read what happened.
 
@@ -81,7 +81,7 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 | `template/.claude/agents/` | The six agents, as used inside an app |
 | `.claude/agents/` | General purpose copies of the six agents, usable right here in this repo |
 | `template/.claude/skills/` | The pipeline commands |
-| `template/.claude/hooks/prd-gate.sh` | The signoff gate |
+| `template/.claude/hooks/prd-gate.sh` | The PRD approval gate |
 | `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
 | `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
 | `scripts/make-app.sh` | Turns a "Use this template" copy into an app. Claude runs it on the first message |

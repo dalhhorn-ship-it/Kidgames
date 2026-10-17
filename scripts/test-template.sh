@@ -20,7 +20,6 @@ for f in "$here"/template/.claude/skills/*/SKILL.md; do
   grep -qx "name: $n" "$f" || fail "$f name does not match folder"
   grep -q '^description: ' "$f" || fail "$f has no description"
 done
-grep -q '^disable-model-invocation: true' "$here/template/.claude/skills/signoff/SKILL.md" || fail "signoff must be founder only"
 for f in "$here"/.claude/skills/*/SKILL.md; do
   grep -qx "name: $(basename "$(dirname "$f")")" "$f" || fail "$f name does not match folder"
 done
