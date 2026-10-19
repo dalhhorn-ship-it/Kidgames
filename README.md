@@ -26,8 +26,8 @@ v1 is kept small on purpose: the smallest version the kids can play. After that,
 | `/prd` | product, reviewed by architect and qa | Answer open decisions |
 | `/signoff` | you | Read the PRD summary and pick Approve in chat. Runs by itself at the end of `/prd` |
 | `/architect` | architect, reviewed by developer and qa | Stack, cost or platform decisions |
-| `/build` | developers in parallel, architect reviews, scribe documents | Play each milestone, decide scope questions |
-| `/qa` | qa, developers fix | Choose which minor bugs to fix now |
+| `/build` | developers in parallel, verifier checks each batch, architect reviews milestones, scribe documents | Play each milestone, decide scope questions |
+| `/qa` | qa, checked by verifier, developers fix | Choose which minor bugs to fix now |
 | `/ship` | operator, scribe | Approve where it gets deployed |
 | `/retro` | operator | Rate the fun, say what was annoying (kids too) |
 | `/release` | product, architect, developers, qa | Pick the next small release, approve it, try it with the kids |
@@ -43,11 +43,13 @@ v1 is kept small on purpose: the smallest version the kids can play. After that,
 | developer | Sonnet | Strong coder at a fraction of the cost, runs many times |
 | qa | Sonnet | Writes and runs tests, good at finding edge cases |
 | scribe | Haiku | Docs upkeep is mechanical, cheapest model is enough |
+| verifier | Haiku | Independent read only check of each batch. Reruns on Sonnet only when unsure |
 
 Money saving tips:
 * Run the main session on Sonnet (`/model sonnet`) during `/build` and `/qa`. Switch to Opus for `/prd` and `/architect` if you want the operator sharper during discussions.
 * Opus agents run only a few times per project. Sonnet and Haiku do the repeated work.
 * An agent that fails twice on a task is escalated one tier for that task only.
+* Verification runs cheapest first: a free script, then one Haiku verifier per batch, then the Opus architect only at milestones.
 
 ## How the founder stays in charge
 
@@ -72,6 +74,8 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 
 ## Testing and docs
 
+* No agent checks its own work. `./scripts/verify.sh` runs free mechanical checks first: developers stay inside their task's files, add a test, never skip or delete tests, add no tracking; QA has a test for every AC; the scribe only touches docs. Only when that passes does the read only `verifier` agent read the diff against the acceptance criteria. Agents cannot edit the script.
+
 * Every app has one check command, `./scripts/check.sh` (lint, typecheck, unit and end to end tests). Agents must pass it before a task is done, and CI runs it on every push.
 * Developers ship tests with every task. QA maps every PRD acceptance criterion to a test and writes `docs/TEST_REPORT.md`.
 * The scribe updates README, CHANGELOG and STATUS at every milestone. Lessons learned go into the app's `CLAUDE.md`.
@@ -82,11 +86,12 @@ Apps deploy to Cloudflare Workers as static assets (`wrangler.jsonc` pointing at
 |---|---|
 | `template/` | Everything copied into a new app |
 | `template/CLAUDE.md` | The factory operating manual the operator follows |
-| `template/.claude/agents/` | The six agents, as used inside an app |
-| `.claude/agents/` | General purpose copies of the six agents, usable right here in this repo |
+| `template/.claude/agents/` | The seven agents, as used inside an app |
+| `.claude/agents/` | General purpose copies of the seven agents, usable right here in this repo |
 | `template/.claude/skills/` | The pipeline commands |
 | `template/.claude/hooks/prd-gate.sh` | The PRD approval gate |
 | `template/.claude/hooks/prd-approve.sh` | Stamps the PRD when you approve it in chat |
+| `template/scripts/verify.sh` | Free, independent checks of each agent's work, run before the verifier agent |
 | `learnings/` | Inbox of retro feedback from apps, and the log of what was adopted |
 | `.claude/skills/harvest/` | `/harvest`: turn app learnings into template improvements |
 | `scripts/make-app.sh` | Turns a "Use this template" copy into an app. Claude runs it on the first message |
