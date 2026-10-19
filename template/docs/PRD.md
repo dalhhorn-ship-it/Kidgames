@@ -12,10 +12,14 @@ Who plays, ages, alone or together. Device: iPad in Safari, added to the home sc
 How we will know it worked (for example "the kids ask to play again tomorrow").
 
 ## 4. Scope for v1
+The smallest version the kids can play and enjoy.
 * Feature
 
-## 5. Out of scope (Later)
-* Idea for later
+## 5. Release backlog (after v1)
+Small releases, one at a time. Each one gives the kids one thing they can feel, is at most 5 tasks and ships on its own.
+| Release | What the kids get | Why now | Size (tasks) | Status |
+|---|---|---|---|---|
+| v2 | | | | idea |
 
 ## 6. User flows
 ### Flow 1: name
@@ -40,3 +44,12 @@ Platform, budget (default: free), offline, time.
 ## 11. Risks and open questions
 | Question | Options | Recommendation | Owner |
 |---|---|---|---|
+
+## 12. Releases
+One section per release after v1, added by `/release`. New acceptance criteria continue the AC numbers.
+
+<!-- ### v2: title
+Goal: what the kids get.
+In:
+Out:
+* **AC20:** Given ..., when ..., then ... -->

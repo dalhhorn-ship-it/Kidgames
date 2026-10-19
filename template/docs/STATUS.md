@@ -1,6 +1,7 @@
 # Status
 
 **Phase:** not started
+**Release:** v1
 **Next step:** tell Claude your idea (or `/brainstorm`)
 **Blockers:** none
 

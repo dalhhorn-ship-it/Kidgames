@@ -15,7 +15,10 @@ The brainstormer comes up with ideas, you and the kids pick one, and the factory
 
 ```
 /brainstorm -> /prd -> approve (founder) -> /architect -> /build -> /qa -> /ship -> /retro
+then, one at a time: /release
 ```
+
+v1 is kept small on purpose: the smallest version the kids can play. After that, every new feature is its own small release with at most 5 tasks. You pick it and approve it in chat. It gets built, tested and shipped, and what the kids say decides the next one.
 
 | Command | Who does the work | Founder involvement |
 |---|---|---|
@@ -27,6 +30,7 @@ The brainstormer comes up with ideas, you and the kids pick one, and the factory
 | `/qa` | qa, developers fix | Choose which minor bugs to fix now |
 | `/ship` | operator, scribe | Approve where it gets deployed |
 | `/retro` | operator | Rate the fun, say what was annoying (kids too) |
+| `/release` | product, architect, developers, qa | Pick the next small release, approve it, try it with the kids |
 | `/factory` | runs whichever step is next | Stops at every gate |
 
 ## The team and the models
