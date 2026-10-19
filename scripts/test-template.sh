@@ -65,6 +65,7 @@ expect 2 "$app/src/main.ts"
 expect 2 "$app/docs/PRD.approved"
 expect 2 "$app/scripts/signoff.sh"
 expect 2 "$app/.claude/settings.json"
+expect 2 "$app/scripts/verify.sh"
 pass "gate blocks code before signoff"
 
 # 4. Signoff requires READY status, and the approval hook stamps only on a real approve
@@ -93,6 +94,34 @@ echo "* sneaky new feature" >> "$app/docs/PRD.md"
 expect 2 "$app/src/main.ts"
 ( cd "$app" && ! ./scripts/signoff.sh --check >/dev/null ) || fail "check passed on changed PRD"
 pass "PRD change closes the gate"
+
+# 6. verify.sh catches bad work and passes good work
+git -C "$app" checkout -q -- docs/PRD.md
+echo '| T2 | Rocket | T1 | B | `src/rocket.ts`, src/ui/ | AC1 | M1 | todo |' >> "$app/docs/PLAN.md"
+( cd "$app" && git add -A && git commit -qm "plan" )
+v() { (cd "$app" && ./scripts/verify.sh "$@" >"$tmp/v.out" 2>&1); }
+want() { grep -q "$1" "$tmp/v.out" || { cat "$tmp/v.out"; fail "verify.sh missed: $1"; }; }
+mkdir -p "$app/src/ui" "$app/tests"
+echo 'gtag("x"); fetch("https://ads.example.com")' > "$app/src/rocket.ts"
+echo 'x' > "$app/src/other.ts"
+echo 'it.skip("AC1: x", () => { expect(1).toBe(1) })' > "$app/tests/rocket.test.ts"
+! v task T2 --no-check || fail "verify.sh passed bad work"
+want "src/other.ts is outside"; want "skips a test"; want "tracking"; want "external URL"
+rm "$app/src/other.ts"
+echo 'export const a = 1' > "$app/src/rocket.ts"
+echo 'it("AC1: x", () => { expect(1).toBe(1) })' > "$app/tests/rocket.test.ts"
+v task T2 || { cat "$tmp/v.out"; fail "verify.sh failed good work"; }
+v acs || { cat "$tmp/v.out"; fail "verify.sh acs failed with AC1 tested"; }
+! v docs || fail "verify.sh docs passed a code change"
+( cd "$app" && git add -A && git commit -qm "T2" )
+git -C "$app" rm -q tests/rocket.test.ts
+! v task T2 --no-check || fail "verify.sh passed a deleted test"
+want "was deleted"
+git -C "$app" reset -q --hard
+echo "* more" >> "$app/README.md"
+v docs || { cat "$tmp/v.out"; fail "verify.sh docs failed a docs change"; }
+git -C "$app" checkout -q -- README.md
+pass "verify.sh checks developer, qa and scribe work"
 
 ( cd "$app" && ./scripts/check.sh >/dev/null ) || fail "check.sh fails on empty app"
 pass "check.sh runs on empty app"
